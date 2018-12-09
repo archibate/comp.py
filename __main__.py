@@ -11,8 +11,11 @@ archive, file = None, None
 uncomp = False
 method = None
 
+def gprint(*args):
+    print(' '.join(args))
+
 def usage():
-    print('usage:', sys.argv[0], '<archive> -f <file> [-m {' + '|'.join(methods) + '}]')
+    gprint('usage:', sys.argv[0], '{c|uc} <archive> -f <file> [-m {' + '|'.join(methods) + '}]')
     sys.exit()
 
 argv = list(sys.argv)

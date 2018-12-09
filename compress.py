@@ -4,6 +4,7 @@
 from htree import mkht_methods
 from serqu import betterq, serializq, unserializq
 from tobytes import tobytes
+import struct
 
 
 def mkoccurtab(xs):
@@ -44,11 +45,13 @@ def main(fin, fout, meth):
     if meth is None:
         meth = 'mkpy'
     xs = fin.read()
+    insize = fin.tell()
     fin.close()
     que = mkprioque(xs)
     squ = serializq(que)
     fout.write(b'\x7fZ')
     fout.write(meth.upper().encode('utf-8'))
+    fout.write(struct.pack('I', insize))
     fout.write(tobytes(squ))
     bmp = mkht_methods[meth](que).tomap()
     bs = ''.join(bmp[x] for x in xs)

@@ -91,13 +91,13 @@ void unserializq(FILE *f)
 	}
 }
 
-void uncomp(NODE *htree, FILE *f, FILE *fout)
+void uncomp(NODE *htree, FILE *f, FILE *fout, size_t size)
 {
 	NODE *node = htree;
 	char c = fgetc(f);
 	int i = 0;
 
-	while (!feof(f)) {
+	while (!feof(f) && size--) {
 		//printf("%d", !!(c&(1<<i)));
 		if (c & (1 << i++))
 			node = node->r;
@@ -132,11 +132,13 @@ int main(int argc, char **argv)
 		fprintf(stderr, "wrong file format: %s\n", input);
 		return -1;
 	}
+	size_t outsize;
+	fread(&outsize, sizeof(outsize), 1, f);
 	unserializq(f);
 	NODE *ht = genhtree();
 	inbalancize(ht);
 	FILE *fout = fopen(output, "wb");
-	uncomp(ht, f, fout);
+	uncomp(ht, f, fout, outsize);
 	fclose(fout);
 	fclose(f);
 	return 0;
